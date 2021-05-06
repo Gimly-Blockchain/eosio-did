@@ -1,56 +1,24 @@
-import { DIDDocument } from 'did-resolver';
-import { create } from './create';
-import { update } from './create';
-import { deactivate } from './create';
+import create from './create';
+import resolve from './resolve';
+import update from './update';
+import deactivate from './deactivate';
+import { ConfigOptions, EosioDIDInterface } from './types';
 
-type ConfigOptions = {
-  [x: string]: {
-    chainId: string,
-    service: [{
-      id: string,
-      type: [string],
-      serviceEndpoint: string
-    }]
-  }
-}
 
-type Authority = {
-  threshold: number,
-  keys?: [{
-    key: string,
-    weight: number
-  }],
-  accounts?: [{
-    permission: {
-      actor: string,
-      permission: string
-    },
-    weight: number
-  }],
-  waits?: [{
-    wait_sec: number,
-    wait: number
-  }]
-}
-
-export default class EosioDID {
+export default class EosioDID implements EosioDIDInterface {
   constructor(options: ConfigOptions) {
 
   }
 
-  async create(creator: string, name: string, owner: Authority, active: Authority, options?: ConfigOptions): Promise<DIDDocument> {
-    return { id: 'did:eosio:stub' };
-  }
+  create = create;
+  resolve = resolve;
+  update = update;
+  deactivate = deactivate;
+}
 
-  async resolve(did: string, options?: ConfigOptions): Promise<DIDDocument> {
-    return { id: 'did:eosio:stub' };
-  }
-
-  async update(account: string, permission: string, parent: string, auth: Authority, options?: ConfigOptions): Promise<DIDDocument> {
-    return { id: 'did:eosio:stub' };
-  }
-
-  async deactivate(did: string, options?: ConfigOptions): Promise<void> {
-    throw Error('EOSIO DID deactivate not supported');
-  }
+export {
+  create,
+  resolve,
+  update,
+  deactivate
 }
