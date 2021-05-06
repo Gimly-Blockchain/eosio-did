@@ -6,7 +6,7 @@ import { ConfigOptions, EosioDIDInterface } from './types';
 
 
 export default class EosioDID implements EosioDIDInterface {
-  constructor(options: ConfigOptions) {
+  constructor(options?: ConfigOptions) {
 
   }
 
