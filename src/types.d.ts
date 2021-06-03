@@ -12,6 +12,31 @@ export declare type ConfigOptions = {
     }
 }
 
+// export declare type ConfigOptions = {
+//     registry?: ChainRegistry,
+//     authorization?: [
+//         {
+//           actor: string,
+//           permission: string,
+//         },
+//     ], 
+//     create?: {
+//         buyrambytes?: {
+//           bytes: number,
+//         },
+//         delegatebw?: {
+//           stakeNetQuantity?: string,
+//           stakeCpuQuantity?: string,
+//           transfer?: boolean,
+//         },
+//     },
+//     config?: {
+//         blocksBehind?: number,
+//         expireSeconds?: number,
+//     },
+//     [x: string]: any
+// }
+
 export declare type Authority = {
     threshold: number,
     keys?: [{

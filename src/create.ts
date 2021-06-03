@@ -51,7 +51,7 @@ export default async function create(
       stakeCpuQuantity: '1.0000 EOS',
       transfer: false,
     },
-    configurationObject: {
+    config: {
       blocksBehind: 3,
       expireSeconds: 30,
     },
@@ -120,11 +120,16 @@ export default async function create(
             },
           ],
         },
-        additionalOptions.configurationObject
+        additionalOptions.config
       );
+
       console.dir(result);
-      // TODO: convert transaction result to did document
-      return { id: 'did:eosio:stub' };
+
+      // TODO: create the complete DIDDocument
+      return {
+        '@context': ['https://www.w3.org/ns/did/v1'],
+        id: 'did:eosio:' + chain + ':' + name,
+      };
     } catch (e) {
       if (
         !(e instanceof FetchError) ||
