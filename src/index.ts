@@ -4,11 +4,8 @@ import update from './update';
 import deactivate from './deactivate';
 import { ConfigOptions, EosioDIDInterface } from './types';
 
-
 export default class EosioDID implements EosioDIDInterface {
-  constructor(options?: ConfigOptions) {
-
-  }
+  constructor(options?: ConfigOptions) {}
 
   create = create;
   resolve = resolve;
@@ -16,9 +13,4 @@ export default class EosioDID implements EosioDIDInterface {
   deactivate = deactivate;
 }
 
-export {
-  create,
-  resolve,
-  update,
-  deactivate
-}
+export { create, resolve, update, deactivate };
