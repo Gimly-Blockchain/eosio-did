@@ -25,6 +25,6 @@ The DID specification can be found at [eosio-did-spec](https://github.com/Gimly-
 
 ## DID Update
 
-## Deactivate
+## DID Deactivate
 
 
