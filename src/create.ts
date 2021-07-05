@@ -1,29 +1,18 @@
-import { DIDDocument } from 'did-resolver';
+import { Resolver, DIDDocument } from 'did-resolver';
+import {
+  getResolver,
+  eosioChainRegistry as defaultChainRegistry,
+  REGEX_ACCOUNT_NAME,
+  REGEX_CHAIN_ID,
+  REGEX_CHAIN_NAME 
+} from 'eosio-did-resolver';
 import { Authority, ConfigOptions } from './types';
 import fetch, { FetchError } from 'node-fetch';
 import { JsonRpc, Api } from 'eosjs';
 import { SignatureProvider } from 'eosjs/dist/eosjs-api-interfaces';
 import { TextEncoder, TextDecoder } from 'util';
 
-// TODO: import the chain-registry from the resolver npm package.
-const defaultChainRegistry: ConfigOptions = {
-  'eos:testnet:jungle': {
-    chainId: '2a02a0053e5a8cf73a56ba0fda11e4d92e0238a4a2aa74fccf46d5a910746840',
-    service: [
-      {
-        id: 'https://jungle3.cryptolions.io',
-        type: 'LinkedDomains',
-        serviceEndpoint: 'https://jungle3.cryptolions.io',
-      },
-    ],
-  },
-};
-
-const ACCOUNT_NAME = `^([a-z1-5.]{0,12}[a-z1-5])$`;
-const CHAIN_ID = new RegExp(`^([A-Fa-f0-9]{64})$`);
-const CHAIN_NAME = new RegExp(
-  `^(([a-z1-5.]{0,12}[a-z1-5])((:[a-z1-5.]{0,12}[a-z1-5])+)?)$`
-);
+const resolver = new Resolver(getResolver());
 
 export default async function create(
   chain: string,
@@ -36,19 +25,19 @@ export default async function create(
 ): Promise<DIDDocument> {
   // the user may want to override these values.
   const additionalOptions = {
-    receiverAccount: 'eosio',
+    receiverAccount: options?.receiverAccount ? options.receiverAccount : 'eosio',
     authorization: [
       {
         actor: creator,
-        permission: 'active',
+        permission: options?.creatorPermission ? options.creatorPermission : 'active',
       },
     ],
     buyrambytes: {
-      bytes: 8192,
+      bytes: options?.buyrambytes ? options.buyrambytes : 8192,
     },
     delegatebw: {
-      stakeNetQuantity: '1.0000 EOS',
-      stakeCpuQuantity: '1.0000 EOS',
+      stakeNetQuantity: options?.stakeNetQuantity ? options.stakeNetQuantity : '1.0000 EOS',
+      stakeCpuQuantity: options?.stakeCpuQuantity ? options.stakeCpuQuantity : '1.0000 EOS',
       transfer: false,
     },
     config: {
@@ -62,7 +51,7 @@ export default async function create(
 
   const chainRegistry = {
     ...defaultChainRegistry,
-    ...options,
+    ...options?.registry,
   };
 
   const chainData = getChainData(chainRegistry, chain);
@@ -125,11 +114,15 @@ export default async function create(
 
       console.dir(result);
 
-      // TODO: create the complete DIDDocument
-      return {
-        '@context': ['https://www.w3.org/ns/did/v1'],
-        id: 'did:eosio:' + chain + ':' + name,
-      };
+      // fetch DIDDocument
+      const did = `did:eosio:${chain}:${name}`;
+      const didResult = await resolver.resolve(did, { fetch });
+
+      const { error } = didResult.didResolutionMetadata;
+      if (error) throw Error(error);
+      if (didResult.didDocument === null) throw Error(`Could not fetch DIDDocument for DID ${did}`);
+      else return didResult.didDocument;
+
     } catch (e) {
       if (
         !(e instanceof FetchError) ||
@@ -146,7 +139,7 @@ export default async function create(
 
 function getChainData(chainRegistry: ConfigOptions, chainId: string) {
   // findChainByName
-  const partsName = chainId.match(CHAIN_NAME);
+  const partsName = chainId.match(REGEX_CHAIN_NAME);
   if (partsName) {
     const entry = chainRegistry[partsName[1]];
     if (entry) return entry;
@@ -156,7 +149,7 @@ function getChainData(chainRegistry: ConfigOptions, chainId: string) {
   }
 
   // findChainById
-  const partsID = chainId.match(CHAIN_ID);
+  const partsID = chainId.match(REGEX_CHAIN_ID);
   if (partsID) {
     for (let key of Object.keys(chainRegistry)) {
       const entry = chainRegistry[key];
@@ -173,6 +166,6 @@ function getChainData(chainRegistry: ConfigOptions, chainId: string) {
 }
 
 function validateAccountName(name: string) {
-  if (name.match(ACCOUNT_NAME) === null)
+  if (name.match(REGEX_ACCOUNT_NAME) === null)
     throw new Error(name + ' does not conform to account name specification.');
 }

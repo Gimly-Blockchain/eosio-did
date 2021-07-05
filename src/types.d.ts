@@ -1,7 +1,7 @@
 import { DIDDocument } from 'did-resolver';
 import { SignatureProvider } from 'eosjs/dist/eosjs-api-interfaces';
 
-export declare type ConfigOptions = {
+export declare type ChainRegistry = {
     [x: string]: {
         chainId: string,
         service: [{
@@ -12,30 +12,15 @@ export declare type ConfigOptions = {
     }
 }
 
-// export declare type ConfigOptions = {
-//     registry?: ChainRegistry,
-//     authorization?: [
-//         {
-//           actor: string,
-//           permission: string,
-//         },
-//     ], 
-//     create?: {
-//         buyrambytes?: {
-//           bytes: number,
-//         },
-//         delegatebw?: {
-//           stakeNetQuantity?: string,
-//           stakeCpuQuantity?: string,
-//           transfer?: boolean,
-//         },
-//     },
-//     config?: {
-//         blocksBehind?: number,
-//         expireSeconds?: number,
-//     },
-//     [x: string]: any
-// }
+export declare type ConfigOptions = {
+    registry?: ChainRegistry,
+    receiverAccount?: sting,
+    creatorPermission?: string,
+    buyrambytes?: number,
+    stakeNetQuantity?: string,
+    stakeCpuQuantity?: string
+    [x: string]: any
+}
 
 export declare type Authority = {
     threshold: number,
