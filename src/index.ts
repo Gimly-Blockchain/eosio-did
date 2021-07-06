@@ -1,39 +1,47 @@
 import create from './create';
-import resolve from './resolve';
 import update from './update';
-import deactivate from './deactivate';
-import { ConfigOptions, EosioDIDInterface, Authority } from './types';
-import { SignatureProvider } from 'eosjs/dist/eosjs-api-interfaces';
+import { Authority, CreateOptions, EosioOptions, UpdateOptions } from './types';
 import { DIDDocument } from 'did-resolver';
+import {
+  defaultCreateOptions,
+  defaultEosioOptions,
+  defaultUpdateOptions,
+} from './defaultEosioOptions';
 
-export default class EosioDID implements EosioDIDInterface {
-  options: ConfigOptions;
-  constructor(options: ConfigOptions = {}) {
-    this.options = options;
+export default class EosioDID {
+  _options: EosioOptions;
+  constructor(options: EosioOptions = {}) {
+    this._options = { ...defaultEosioOptions, ...options };
   }
-
+  get options() {
+    return this._options;
+  }
+  set options(options: EosioOptions) {
+    this._options = options;
+  }
   async create(
-    chain: string,
-    creator: string,
     name: string,
     owner: Authority,
     active: Authority,
-    signatureProvider: SignatureProvider,
-    options?: ConfigOptions
+    options?: CreateOptions
   ): Promise<DIDDocument> {
-    return await create(
-      chain,
-      creator,
-      name,
-      owner,
-      active,
-      signatureProvider,
-      { ...this.options, ...options }
-    );
+    return create(name, owner, active, {
+      ...defaultCreateOptions,
+      ...this._options,
+      ...options,
+    });
   }
-  resolve = resolve;
-  update = update;
-  deactivate = deactivate;
+  async update(
+    permission: string,
+    auth: Authority,
+    options?: UpdateOptions
+  ): Promise<DIDDocument> {
+    return update(permission, auth, {
+      ...defaultUpdateOptions,
+      ...this._options,
+      ...options,
+    });
+  }
 }
 
-export { create, resolve, update, deactivate };
+export { create, update };
