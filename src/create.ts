@@ -4,8 +4,7 @@ import { Authority, CreateOptions } from './types';
 import fetch, { FetchError } from 'node-fetch';
 import { JsonRpc, Api } from 'eosjs';
 import { TextEncoder, TextDecoder } from 'util';
-import { checkBaseProperties, getChainData, validateAccountName } from './util';
-import { SignatureProvider } from 'eosjs/dist/eosjs-api-interfaces';
+import { getChainData, validateAccountName } from './util';
 
 const resolver = new Resolver(getResolver());
 
@@ -13,33 +12,32 @@ export default async function create(
   name: string,
   owner: Authority,
   active: Authority,
-  options: CreateOptions
+  options: Required<CreateOptions>
 ): Promise<DIDDocument> {
-  checkBaseProperties(options);
-  validateAccountName(options.account as string);
+  validateAccountName(options.account);
   validateAccountName(name);
   const chainRegistry = {
     ...eosioChainRegistry,
     ...options.registry,
   };
-  const chainData = getChainData(chainRegistry, options.chain as string);
+  const chainData = getChainData(chainRegistry, options.chain);
+  const authorization = [
+    {
+      actor: options.account,
+      permission: options.accountPermission,
+    },
+  ];
   let fetchAttempts = 0;
   for (const service of chainData.service) {
     fetchAttempts++;
     const rpc = new JsonRpc(service.serviceEndpoint, { fetch });
     const api = new Api({
       rpc: rpc,
-      signatureProvider: options.signatureProvider as SignatureProvider,
+      signatureProvider: options.signatureProvider,
       textDecoder: new TextDecoder() as any,
       textEncoder: new TextEncoder(),
     });
     try {
-      const authorization = [
-        {
-          actor: options.account as string,
-          permission: options.creatorPermission as string,
-        },
-      ];
       const result = await api.transact(
         {
           actions: [
@@ -80,7 +78,6 @@ export default async function create(
         },
         options.transactionOptions
       );
-      console.dir(result);
       // fetch DIDDocument
       const did = `did:eosio:${options.chain}:${name}`;
       const didResult = await resolver.resolve(did, { fetch });

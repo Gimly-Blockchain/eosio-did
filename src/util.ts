@@ -40,9 +40,3 @@ export function validateAccountName(name: string): void {
   if (name.match(REGEX_ACCOUNT_NAME) === null)
     throw new Error(name + ' does not conform to account name specification.');
 }
-
-export function checkBaseProperties(options: any): void {
-  ['chain', 'account', 'signatureProvider'].forEach(key => {
-    if (!(key in options)) throw Error(`Missing property ${key}`);
-  });
-}

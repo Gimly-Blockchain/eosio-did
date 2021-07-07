@@ -2,54 +2,58 @@ import { DIDDocument, Resolver } from 'did-resolver';
 import { getResolver, eosioChainRegistry } from 'eosio-did-resolver';
 import { Api, JsonRpc } from 'eosjs';
 import { Authority, UpdateOptions } from './types';
-import fetch from 'node-fetch';
-import { checkBaseProperties, getChainData, validateAccountName } from './util';
+import fetch, { FetchError } from 'node-fetch';
+import { getChainData, validateAccountName } from './util';
 import { TextDecoder, TextEncoder } from 'util';
-import { SignatureProvider } from 'eosjs/dist/eosjs-api-interfaces';
 
 const resolver = new Resolver(getResolver());
 
 export default async function update(
   permission: string,
-  auth: Authority,
-  options: UpdateOptions
+  auth: Authority | undefined,
+  options: Required<UpdateOptions>
 ): Promise<DIDDocument> {
-  checkBaseProperties(options);
-  validateAccountName(options.account as string);
+  validateAccountName(options.account);
   const chainRegistry = {
     ...eosioChainRegistry,
     ...options.registry,
   };
-  const chainData = getChainData(chainRegistry, options.chain as string);
+  const chainData = getChainData(chainRegistry, options.chain);
   let success = false;
   for (const service of chainData.service) {
     const rpc = new JsonRpc(service.serviceEndpoint, { fetch });
     const api = new Api({
       rpc,
-      signatureProvider: options.signatureProvider as SignatureProvider,
+      signatureProvider: options.signatureProvider,
       textDecoder: new TextDecoder() as any,
       textEncoder: new TextEncoder(),
     });
-    const updateauth_input = {
-      account: options.account,
-      permission,
-      parent: options.parent,
-      auth,
-    };
+    const data =
+      auth === undefined
+        ? {
+            account: options.account,
+            permission,
+          }
+        : {
+            account: options.account,
+            permission,
+            parent: options.parent,
+            auth,
+          };
     try {
       await api.transact(
         {
           actions: [
             {
-              account: options.actionAccount as string,
-              name: options.actionName as string,
+              account: options.actionAccount,
+              name: auth === undefined ? 'deleteauth' : 'updateauth',
               authorization: [
                 {
-                  actor: options.account as string,
-                  permission: options.parent as string,
+                  actor: options.account,
+                  permission: options.accountPermission,
                 },
               ],
-              data: updateauth_input,
+              data,
             },
           ],
         },
@@ -58,7 +62,7 @@ export default async function update(
       success = true;
       break;
     } catch (err) {
-      console.error(err);
+      if (!(err instanceof FetchError)) throw err;
     }
   }
   if (!success) throw new Error('Could not update DID.');

@@ -15,27 +15,26 @@ export interface ChainRegistry {
 }
 
 export interface EosioOptions {
+  chain: string;
+  account: string;
+  signatureProvider: SignatureProvider;
+  accountPermission?: string;
   registry?: ChainRegistry;
-  chain?: string;
-  account?: string;
   transactionOptions?: {
     blocksBehind?: number;
     expireSeconds?: number;
   };
-  signatureProvider?: SignatureProvider;
 }
 
-export interface CreateOptions extends EosioOptions {
+export interface CreateOptions extends Partial<EosioOptions> {
   receiverAccount?: sting;
-  creatorPermission?: string;
   buyrambytes?: number;
   stakeNetQuantity?: string;
   stakeCpuQuantity?: string;
-  transfer: boolean;
+  transfer?: boolean;
 }
 
-export interface UpdateOptions extends EosioOptions {
-  actionName?: 'updateauth' | 'deleteauth';
+export interface UpdateOptions extends Partial<EosioOptions> {
   actionAccount?: string;
   parent?: string;
 }
