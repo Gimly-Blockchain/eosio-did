@@ -1,9 +1,8 @@
 import { DIDDocument, Resolver } from 'did-resolver';
-import { getResolver } from 'eosio-did-resolver';
+import { getResolver, eosioChainRegistry } from 'eosio-did-resolver';
 import { Api, JsonRpc } from 'eosjs';
 import { Authority, UpdateOptions } from './types';
 import fetch from 'node-fetch';
-import eosioChainRegistry from '../node_modules/eosio-did-resolver/src/eosio-did-chain-registry.json';
 import { checkBaseProperties, getChainData, validateAccountName } from './util';
 import { TextDecoder, TextEncoder } from 'util';
 import { SignatureProvider } from 'eosjs/dist/eosjs-api-interfaces';

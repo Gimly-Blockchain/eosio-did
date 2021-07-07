@@ -1,6 +1,5 @@
 import { Resolver, DIDDocument } from 'did-resolver';
-import { getResolver } from 'eosio-did-resolver';
-import eosioChainRegistry from '../node_modules/eosio-did-resolver/src/eosio-did-chain-registry.json';
+import { getResolver, eosioChainRegistry } from 'eosio-did-resolver';
 import { Authority, CreateOptions } from './types';
 import fetch, { FetchError } from 'node-fetch';
 import { JsonRpc, Api } from 'eosjs';
