@@ -26,7 +26,6 @@ The DID specification can be found at [eosio-did-spec](https://github.com/Gimly-
 ```js
 const eosioDid = new EosioDID({
     chain: 'eos:testnet:jungle',
-    account: 'didtester333',
     signatureProvider: new JsSignatureProvider(['PVT_K1_27yS4sdX86VDahQRABMLCcDABH5Vzy8vgLLS7wBeKESyrXetMf'])
 });
 const myPermission = {
@@ -108,12 +107,11 @@ All function calls (create, resolve, update, deactivate) can be called with an o
 }
 ```
 
-**chain** - the chain id or the registered chain name (see the [DID method schema](https://github.com/Gimly-Blockchain/eosio-did-spec#3-did-method-schema-dideosio) part of the EOSIO DID spec). e.g.
+**chain** - the chain id or the registered chain name (see the [DID method schema](https://github.com/Gimly-Blockchain/eosio-did-spec#3-did-method-schema-dideosio) part of the EOSIO DID spec). This must be provided to know which chain to contact and a corresponding item in the [eosio-did-chain-registry.json](https://github.com/Gimly-Blockchain/eosio-did-resolver/blob/master/src/eosio-did-chain-registry.json) or `registry` property must exist e.g.
 <br>`eos:testnet:jungle`
 <br>`telos`
 <br>`4667b205c6838ef70ff7988f6e8257e8be0e1284a2f59699054a018f743b1d11`
 <br>**fetch** - fetch object used to communicate with the eosio API. If using nodejs then you need to import the `node-fetch` npm package and use this. See the [eosjs documentation](https://www.npmjs.com/package/eosjs) for more details.
-<br>**account** - the account name of the account that will send txs
 <br>**signatureProvider** - the SignatureProvider object that will be used to sign txs
 <br>**accountPermission** - the permission name that will be used to send txs
 <br>**registry** - additional ChainRegisries that are used to find the API endpoints of the eosio API. This should be used when communicating with EOSIO blockchain nodes that have not been registed in the [eosio-did-chain-registry.json](https://github.com/Gimly-Blockchain/eosio-did-resolver/blob/master/src/eosio-did-chain-registry.json)
@@ -121,10 +119,9 @@ All function calls (create, resolve, update, deactivate) can be called with an o
 
 ### Create configuration
 
-The create function can be called with the following _additional_ properties:
+The create function can be called with the following _additional_ optional properties:
 ```ts
 {
-  receiverAccount?: sting;
   buyrambytes?: number;
   stakeNetQuantity?: string;
   stakeCpuQuantity?: string;
@@ -132,15 +129,10 @@ The create function can be called with the following _additional_ properties:
 }
 ```
 
-### Update configuration
-
-The update function can be called with the following _additional_ properties:
-```ts
-{
-  actionAccount?: string;
-  parent?: string;
-}
-```
+<br>**buyrambytes** - amount of RAM to allocate to the new account in bytes (default = 8192)
+<br>**stakeNetQuantity** - amout of NET to stake to the new account (default = "1.0000 EOS")
+<br>**stakeCpuQuantity** - amount of CPU to stake to the new account (default = "1.0000 EOS")
+<br>**transfer** - transfer the ownership of the staked tokens to the new account (default = false)
 
 ## Error handling
 
