@@ -8,12 +8,13 @@ import { getChainData, validateAccountName } from './util';
 const resolver = new Resolver(getResolver());
 
 export default async function create(
+  creator: string,
   name: string,
   owner: Authority,
   active: Authority,
   options: Required<CreateOptions>
 ): Promise<DIDCreateResult> {
-  validateAccountName(options.account);
+  validateAccountName(creator);
   validateAccountName(name);
 
   const chainRegistry = {
@@ -23,7 +24,7 @@ export default async function create(
   const chainData = getChainData(chainRegistry, options.chain);
   const authorization = [
     {
-      actor: options.account,
+      actor: creator,
       permission: options.accountPermission,
     },
   ];
@@ -41,32 +42,32 @@ export default async function create(
         {
           actions: [
             {
-              account: options.receiverAccount,
+              account: 'eosio',
               name: 'newaccount',
               authorization,
               data: {
-                creator: options.account,
+                creator: creator,
                 name: name,
                 owner: owner,
                 active: active,
               },
             },
             {
-              account: options.receiverAccount,
+              account: 'eosio',
               name: 'buyrambytes',
               authorization,
               data: {
-                payer: options.account,
+                payer: creator,
                 receiver: name,
                 bytes: options.buyrambytes,
               },
             },
             {
-              account: options.receiverAccount,
+              account: 'eosio',
               name: 'delegatebw',
               authorization,
               data: {
-                from: options.account,
+                from: creator,
                 receiver: name,
                 stake_net_quantity: options.stakeNetQuantity,
                 stake_cpu_quantity: options.stakeNetQuantity,

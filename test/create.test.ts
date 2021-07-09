@@ -13,7 +13,6 @@ describe('EOSIO DID class', () => {
     const signatureProvider = new JsSignatureProvider([jungleTestKeys.private]);
     const eosioDid = new EosioDID({
       chain: 'eos:testnet:jungle',
-      account: jungleTestKeys.name,
       signatureProvider,
       fetch
     });
@@ -29,7 +28,7 @@ describe('EOSIO DID class', () => {
       waits: [],
     };
 
-    const didDoc = await eosioDid.create(NEW_ACCOUNT_NAME, myKey, myKey);
+    const didDoc = await eosioDid.create(jungleTestKeys.name, NEW_ACCOUNT_NAME, myKey, myKey);
     if (didDoc.didCreateMetadata.error) {
       console.error(didDoc.didCreateMetadata.error);
     }

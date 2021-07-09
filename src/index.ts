@@ -36,12 +36,13 @@ export default class EosioDID {
   }
 
   async create(
+    creator: string,
     name: string,
     owner: Authority,
     active: Authority,
     options?: CreateOptions
   ): Promise<DIDCreateResult> {
-    return await create(name, owner, active, {
+    return await create(creator, name, owner, active, {
       ...defaultCreateOptions,
       ...this._options,
       ...options,

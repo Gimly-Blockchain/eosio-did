@@ -18,7 +18,6 @@ export interface ChainRegistry {
 export interface EosioOptions extends FetchOptions {
   chain?: string;
   fetch?: any;
-  account?: string;
   signatureProvider?: SignatureProvider;
   accountPermission?: string;
   registry?: ChainRegistry;
@@ -29,7 +28,6 @@ export interface EosioOptions extends FetchOptions {
 }
 
 export interface CreateOptions extends Partial<EosioOptions> {
-  receiverAccount?: sting;
   buyrambytes?: number;
   stakeNetQuantity?: string;
   stakeCpuQuantity?: string;
