@@ -6,7 +6,6 @@ import {
   Authority,
   CreateOptions,
   EosioOptions,
-  UpdateOptions,
   ChainRegistry,
   DIDUpdateResult,
   DIDCreateResult,
@@ -15,7 +14,6 @@ import {
 import {
   defaultCreateOptions,
   defaultEosioOptions,
-  defaultUpdateOptions,
 } from './defaultEosioOptions';
 import { SignatureProvider } from 'eosjs/dist/eosjs-api-interfaces';
 import { DIDResolutionResult } from 'did-resolver';
@@ -36,12 +34,13 @@ export default class EosioDID {
   }
 
   async create(
+    creator: string,
     name: string,
     owner: Authority,
     active: Authority,
     options?: CreateOptions
   ): Promise<DIDCreateResult> {
-    return await create(name, owner, active, {
+    return await create(creator, name, owner, active, {
       ...defaultCreateOptions,
       ...this._options,
       ...options,
@@ -59,15 +58,16 @@ export default class EosioDID {
   }
 
   async update(
+    account: string,
     permission: string,
-    auth: Authority | undefined,
-    options?: UpdateOptions
+    parent: string,
+    auth: Authority,
+    options?: EosioOptions
   ): Promise<DIDUpdateResult> {
-    return await update(permission, auth, {
-      ...defaultUpdateOptions,
+    return await update(account, permission, parent, auth, {
       ...this._options,
       ...options,
-    } as Required<UpdateOptions>);
+    } as Required<EosioOptions>);
   }
 
   async deactivate(did: string, options?: EosioOptions): Promise<DIDDeactivateResult> {
@@ -82,7 +82,6 @@ export {
   Authority,
   EosioOptions,
   CreateOptions,
-  UpdateOptions,
   ChainRegistry,
   SignatureProvider,
 };
