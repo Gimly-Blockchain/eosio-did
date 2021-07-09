@@ -6,8 +6,10 @@ import {
   EosioOptions,
   UpdateOptions,
   ChainRegistry,
+  DIDUpdateResult,
+  DIDCreateResult,
 } from './types';
-import { DIDDocument } from 'did-resolver';
+
 import {
   defaultCreateOptions,
   defaultEosioOptions,
@@ -31,7 +33,7 @@ export default class EosioDID {
     owner: Authority,
     active: Authority,
     options?: CreateOptions
-  ): Promise<DIDDocument> {
+  ): Promise<DIDCreateResult> {
     return create(name, owner, active, {
       ...defaultCreateOptions,
       ...this._options,
@@ -42,7 +44,7 @@ export default class EosioDID {
     permission: string,
     auth: Authority | undefined,
     options?: UpdateOptions
-  ): Promise<DIDDocument> {
+  ): Promise<DIDUpdateResult> {
     return update(permission, auth, {
       ...defaultUpdateOptions,
       ...this._options,

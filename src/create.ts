@@ -27,9 +27,8 @@ export default async function create(
       permission: options.accountPermission,
     },
   ];
-  let fetchAttempts = 0;
+
   for (const service of chainData.service) {
-    fetchAttempts++;
     const rpc = new JsonRpc(service.serviceEndpoint, { fetch });
     const api = new Api({
       rpc: rpc,
