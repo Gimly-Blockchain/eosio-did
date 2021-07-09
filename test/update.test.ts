@@ -31,6 +31,7 @@ describe('EOSIO DID Update', () => {
       signatureProvider,
       chain: 'eos:testnet:jungle',
     });
+
     const didDoc = await eosioDID.update('myperm', myKey);
     if (didDoc.didUpdateMetadata.error) {
       console.error(didDoc.didUpdateMetadata.error);
@@ -52,6 +53,7 @@ describe('EOSIO DID Update', () => {
       signatureProvider,
       chain: 'eos:testnet:jungle',
     });
+
     let didDoc = await eosioDID.update('myperm', undefined);
     if (didDoc.didUpdateMetadata.error) {
       console.error(didDoc.didUpdateMetadata.error);
