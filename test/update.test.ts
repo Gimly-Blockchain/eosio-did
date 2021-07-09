@@ -32,6 +32,9 @@ describe('EOSIO DID Update', () => {
       chain: 'eos:testnet:jungle',
     });
     const didDoc = await eosioDID.update('myperm', myKey);
+    if (didDoc.didUpdateMetadata.error) {
+      console.error(didDoc.didUpdateMetadata.error);
+    }
 
     expect(didDoc.didUpdateMetadata.tx).toBeDefined();
     expect(didDoc.didDocument).toBeDefined();
@@ -50,6 +53,9 @@ describe('EOSIO DID Update', () => {
       chain: 'eos:testnet:jungle',
     });
     let didDoc = await eosioDID.update('myperm', undefined);
+    if (didDoc.didUpdateMetadata.error) {
+      console.error(didDoc.didUpdateMetadata.error);
+    }
 
     expect(didDoc.didUpdateMetadata.tx).toBeDefined();
     expect(didDoc.didDocument).toBeDefined();

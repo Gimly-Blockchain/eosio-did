@@ -4,7 +4,7 @@ import { JsSignatureProvider } from 'eosjs/dist/eosjs-jssig';
 
 const jungleTestKeys = require('../jungleTestKeys.json');
 
-const NEW_ACCOUNT_NAME = 'eosdidtes11';
+const NEW_ACCOUNT_NAME = 'eosdidt22111';
 
 describe('EOSIO DID class', () => {
   it('Create a Jungle DID', async () => {
@@ -28,6 +28,9 @@ describe('EOSIO DID class', () => {
     };
     const didDoc = await eosioDid.create(NEW_ACCOUNT_NAME, myKey, myKey);
 
+    if (didDoc.didCreateMetadata.error) {
+      console.error(didDoc.didCreateMetadata.error);
+    }
     expect(didDoc.didCreateMetadata.tx).toBeDefined();
     expect(didDoc.didDocument).toBeDefined();
   });
