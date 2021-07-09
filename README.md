@@ -92,11 +92,11 @@ await eosioDID.deactivate('did:eosio:eos:testnet:jungle:didtester333');
 
 ## Conficuration
 
-All function calls (create, resolve, update, deactivate) can be called with an optional `options` argument with the following properties:
+All function calls (create, resolve, update, deactivate) can be called with an optional `options` argument with the following optional properties:
 ```ts
 {
   chain?: string;
-  fetch?: any,
+  fetch?: any;
   account?: string;
   signatureProvider?: SignatureProvider;
   accountPermission?: string;
@@ -107,6 +107,17 @@ All function calls (create, resolve, update, deactivate) can be called with an o
   };
 }
 ```
+
+**chain** - the chain id or the registered chain name (see the [DID method schema](https://github.com/Gimly-Blockchain/eosio-did-spec#3-did-method-schema-dideosio) part of the EOSIO DID spec). e.g.
+<br>`eos:testnet:jungle`
+<br>`telos`
+<br>`4667b205c6838ef70ff7988f6e8257e8be0e1284a2f59699054a018f743b1d11`
+<br>**fetch** - fetch object used to communicate with the eosio API. If using nodejs then you need to import the `node-fetch` npm package and use this. See the [eosjs documentation](https://www.npmjs.com/package/eosjs) for more details.
+<br>**account** - the account name of the account that will send txs
+<br>**signatureProvider** - the SignatureProvider object that will be used to sign txs
+<br>**accountPermission** - the permission name that will be used to send txs
+<br>**registry** - additional ChainRegisries that are used to find the API endpoints of the eosio API. This should be used when communicating with EOSIO blockchain nodes that have not been registed in the [eosio-did-chain-registry.json](https://github.com/Gimly-Blockchain/eosio-did-resolver/blob/master/src/eosio-did-chain-registry.json)
+<br>**transactionOptions** - overrides the tx options when the tx is sent. See the [eosjs documentation](https://www.npmjs.com/package/eosjs) for more details.
 
 ### Create configuration
 
@@ -121,7 +132,7 @@ The create function can be called with the following _additional_ properties:
 }
 ```
 
-### Create configuration
+### Update configuration
 
 The update function can be called with the following _additional_ properties:
 ```ts

@@ -17,7 +17,7 @@ export interface ChainRegistry {
 
 export interface EosioOptions extends FetchOptions {
   chain?: string;
-  fetch?: any,
+  fetch?: any;
   account?: string;
   signatureProvider?: SignatureProvider;
   accountPermission?: string;
