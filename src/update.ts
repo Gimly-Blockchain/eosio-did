@@ -1,6 +1,6 @@
 import { getResolver, eosioChainRegistry } from 'eosio-did-resolver';
 import { Api, JsonRpc, RpcError } from 'eosjs';
-import { Authority, DIDUpdateResult, UpdateOptions } from './types';
+import { Authority, DIDUpdateResult, EosioOptions } from './types';
 import { getChainData, validateAccountName } from './util';
 import { TextDecoder, TextEncoder } from 'util';
 import { Resolver } from 'did-resolver';
@@ -8,11 +8,13 @@ import { Resolver } from 'did-resolver';
 const resolver = new Resolver(getResolver());
 
 export default async function update(
+  account: string,
   permission: string,
-  auth: Authority | undefined,
-  options: Required<UpdateOptions>
+  parent: string,
+  auth: Authority,
+  options: Required<EosioOptions>
 ): Promise<DIDUpdateResult> {
-  validateAccountName(options.account);
+  validateAccountName(account);
 
   const chainRegistry = {
     ...eosioChainRegistry,
@@ -28,32 +30,25 @@ export default async function update(
       textDecoder: new TextDecoder() as any,
       textEncoder: new TextEncoder(),
     });
-    const data =
-      auth === undefined
-        ? {
-          account: options.account,
-          permission,
-        }
-        : {
-          account: options.account,
-          permission,
-          parent: options.parent,
-          auth,
-        };
     try {
       const result: any = await api.transact(
         {
           actions: [
             {
-              account: options.actionAccount,
-              name: auth === undefined ? 'deleteauth' : 'updateauth',
+              account: account,
+              name: 'updateauth',
               authorization: [
                 {
-                  actor: options.account,
+                  actor: account,
                   permission: options.accountPermission,
                 },
               ],
-              data,
+              data: {
+                account,
+                permission,
+                parent,
+                auth
+              },
             },
           ],
         },
@@ -61,7 +56,7 @@ export default async function update(
       );
 
       // fetch DIDDocument
-      const did = `did:eosio:${options.chain}:${options.account}`;
+      const did = `did:eosio:${options.chain}:${account}`;
       const didResult = await resolver.resolve(did, { ...options });
       const { error } = didResult.didResolutionMetadata;
       if (error) {

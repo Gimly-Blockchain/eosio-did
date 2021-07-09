@@ -60,11 +60,13 @@ export default class EosioDID {
   }
 
   async update(
+    account: string,
     permission: string,
-    auth: Authority | undefined,
-    options?: UpdateOptions
+    parent: string,
+    auth: Authority,
+    options?: EosioOptions
   ): Promise<DIDUpdateResult> {
-    return await update(permission, auth, {
+    return await update(account, permission, parent, auth, {
       ...defaultUpdateOptions,
       ...this._options,
       ...options,

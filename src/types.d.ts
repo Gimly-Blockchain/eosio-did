@@ -34,11 +34,6 @@ export interface CreateOptions extends Partial<EosioOptions> {
   transfer?: boolean;
 }
 
-export interface UpdateOptions extends Partial<EosioOptions> {
-  actionAccount?: string;
-  parent?: string;
-}
-
 export interface Authority {
   threshold: number;
   keys?: [
