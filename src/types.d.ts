@@ -1,5 +1,6 @@
 import { DIDDocument } from 'did-resolver';
-import { SignatureProvider } from 'eosjs/dist/eosjs-api-interfaces';
+import { RpcError } from 'eosjs';
+import { SignatureProvider, TransactResult } from 'eosjs/dist/eosjs-api-interfaces';
 
 export interface ChainData {
   chainId: string;
@@ -47,23 +48,35 @@ export interface Authority {
       weight: number;
     }
   ];
-  accounts:
-    | []
-    | [
-        {
-          permission: {
-            actor: string;
-            permission: string;
-          };
-          weight: number;
-        }
-      ];
-  waits:
-    | []
-    | [
-        {
-          wait_sec: number;
-          wait: number;
-        }
-      ];
+  accounts: [] | [
+    {
+      permission: {
+        actor: string;
+        permission: string;
+      };
+      weight: number;
+    }
+  ];
+  waits: [] | [
+    {
+      wait_sec: number;
+      wait: number;
+    }
+  ];
+}
+
+export interface DIDCreateResult {
+  didCreateMetadata: {
+    tx?: TransactResult,
+    error?: 'invalidDid' | 'notFound' | 'representationNotSupported' | 'unsupportedDidMethod' | string | RpcError,
+  },
+  didDocument?: DIDDocument
+}
+
+export interface DIDUpdateResult {
+  didUpdateMetadata: {
+    tx?: TransactResult,
+    error?: 'invalidDid' | 'notFound' | 'representationNotSupported' | 'unsupportedDidMethod' | string | RpcError,
+  },
+  didDocument?: DIDDocument
 }
