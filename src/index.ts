@@ -6,7 +6,6 @@ import {
   Authority,
   CreateOptions,
   EosioOptions,
-  UpdateOptions,
   ChainRegistry,
   DIDUpdateResult,
   DIDCreateResult,
@@ -15,7 +14,6 @@ import {
 import {
   defaultCreateOptions,
   defaultEosioOptions,
-  defaultUpdateOptions,
 } from './defaultEosioOptions';
 import { SignatureProvider } from 'eosjs/dist/eosjs-api-interfaces';
 import { DIDResolutionResult } from 'did-resolver';
@@ -67,7 +65,6 @@ export default class EosioDID {
     options?: EosioOptions
   ): Promise<DIDUpdateResult> {
     return await update(account, permission, parent, auth, {
-      ...defaultUpdateOptions,
       ...this._options,
       ...options,
     } as Required<UpdateOptions>);
