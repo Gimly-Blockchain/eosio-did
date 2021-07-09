@@ -1,8 +1,7 @@
-import { Resolver, DIDDocument } from 'did-resolver';
+import { Resolver } from 'did-resolver';
 import { getResolver, eosioChainRegistry } from 'eosio-did-resolver';
-import { Authority, CreateOptions } from './types';
-import fetch, { FetchError } from 'node-fetch';
-import { JsonRpc, Api } from 'eosjs';
+import { Authority, CreateOptions, DIDCreateResult } from './types';
+import { JsonRpc, Api, RpcError } from 'eosjs';
 import { TextEncoder, TextDecoder } from 'util';
 import { getChainData, validateAccountName } from './util';
 
@@ -13,9 +12,10 @@ export default async function create(
   owner: Authority,
   active: Authority,
   options: Required<CreateOptions>
-): Promise<DIDDocument> {
+): Promise<DIDCreateResult> {
   validateAccountName(options.account);
   validateAccountName(name);
+
   const chainRegistry = {
     ...eosioChainRegistry,
     ...options.registry,
@@ -27,10 +27,9 @@ export default async function create(
       permission: options.accountPermission,
     },
   ];
-  let fetchAttempts = 0;
+
   for (const service of chainData.service) {
-    fetchAttempts++;
-    const rpc = new JsonRpc(service.serviceEndpoint, { fetch });
+    const rpc = new JsonRpc(service.serviceEndpoint, options.fetch ? { fetch: options.fetch } : undefined);
     const api = new Api({
       rpc: rpc,
       signatureProvider: options.signatureProvider,
@@ -38,7 +37,7 @@ export default async function create(
       textEncoder: new TextEncoder(),
     });
     try {
-      const result = await api.transact(
+      const result: any = await api.transact(
         {
           actions: [
             {
@@ -78,21 +77,42 @@ export default async function create(
         },
         options.transactionOptions
       );
+
       // fetch DIDDocument
       const did = `did:eosio:${options.chain}:${name}`;
-      const didResult = await resolver.resolve(did, { fetch });
+      const didResult = await resolver.resolve(did, { ...options });
       const { error } = didResult.didResolutionMetadata;
-      if (error) throw Error(error);
-      if (didResult.didDocument === null)
-        throw Error(`Could not fetch DIDDocument for DID ${did}`);
-      else return didResult.didDocument;
+      if (error) {
+        return {
+          didCreateMetadata: {
+            tx: result,
+            error: error
+          }
+        };
+      }
+      if (!didResult.didDocument) {
+        return {
+          didCreateMetadata: {
+            error: 'notFound'
+          }
+        };
+      }
+
+      return {
+        didCreateMetadata: {
+          tx: result
+        },
+        didDocument: didResult.didDocument
+      }
     } catch (e) {
-      if (
-        !(e instanceof FetchError) ||
-        fetchAttempts >= chainData.service.length
-      )
-        throw e;
-      // else: continue with remaining service endpoints
+      if (e instanceof RpcError) {
+        return {
+          didCreateMetadata: {
+            error: e
+          }
+        }
+      }
+      console.error(e);
     }
   }
 

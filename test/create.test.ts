@@ -1,20 +1,21 @@
 import EosioDID from '../src/index';
 import { Authority } from '../src/types';
-import { RpcError } from 'eosjs';
 import { JsSignatureProvider } from 'eosjs/dist/eosjs-jssig';
+import fetch from 'node-fetch';
 
 const jungleTestKeys = require('../jungleTestKeys.json');
 
-const NEW_ACCOUNT_NAME = 'eosdidtest14';
+const NEW_ACCOUNT_NAME = 'eosdidt22113';
 
 describe('EOSIO DID class', () => {
   it('Create a Jungle DID', async () => {
-    expect.assertions(1);
+    expect.assertions(2);
     const signatureProvider = new JsSignatureProvider([jungleTestKeys.private]);
     const eosioDid = new EosioDID({
       chain: 'eos:testnet:jungle',
       account: jungleTestKeys.name,
       signatureProvider,
+      fetch
     });
     const myKey: Authority = {
       threshold: 1,
@@ -27,14 +28,14 @@ describe('EOSIO DID class', () => {
       accounts: [],
       waits: [],
     };
-    let didDoc;
-    try {
-      didDoc = await eosioDid.create(NEW_ACCOUNT_NAME, myKey, myKey);
-    } catch (e) {
-      console.log('\nCaught exception: ' + e);
-      if (e instanceof RpcError) console.log(JSON.stringify(e.json, null, 2));
+
+    const didDoc = await eosioDid.create(NEW_ACCOUNT_NAME, myKey, myKey);
+    if (didDoc.didCreateMetadata.error) {
+      console.error(didDoc.didCreateMetadata.error);
     }
-    expect(didDoc).toBeDefined();
+
+    expect(didDoc.didCreateMetadata.tx).toBeDefined();
+    expect(didDoc.didDocument).toBeDefined();
   });
 });
 
