@@ -31,27 +31,28 @@ export default async function update(
       textEncoder: new TextEncoder(),
     });
     try {
-      const result: any = await api.transact(
-        {
-          actions: [
-            {
-              account: account,
-              name: 'updateauth',
-              authorization: [
-                {
-                  actor: account,
-                  permission: options.accountPermission,
-                },
-              ],
-              data: {
-                account,
-                permission,
-                parent,
-                auth
+      const txData = {
+        actions: [
+          {
+            account: 'eosio',
+            name: 'updateauth',
+            authorization: [
+              {
+                actor: account,
+                permission: parent,
               },
+            ],
+            data: {
+              account,
+              permission,
+              parent,
+              auth
             },
-          ],
-        },
+          },
+        ],
+      }
+      const result: any = await api.transact(
+        txData,
         options.transactionOptions
       );
 

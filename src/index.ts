@@ -67,7 +67,7 @@ export default class EosioDID {
     return await update(account, permission, parent, auth, {
       ...this._options,
       ...options,
-    } as Required<UpdateOptions>);
+    } as Required<EosioOptions>);
   }
 
   async deactivate(did: string, options?: EosioOptions): Promise<DIDDeactivateResult> {
@@ -82,7 +82,6 @@ export {
   Authority,
   EosioOptions,
   CreateOptions,
-  UpdateOptions,
   ChainRegistry,
   SignatureProvider,
 };

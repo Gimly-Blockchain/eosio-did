@@ -33,7 +33,7 @@ describe('EOSIO DID Update', () => {
       fetch
     });
 
-    const didDoc = await eosioDID.update(jungleTestKeys.name, 'owner', 'active2', myKey);
+    const didDoc = await eosioDID.update(jungleTestKeys.name, 'active2', 'owner', myKey);
     if (didDoc.didUpdateMetadata.error) {
       console.error(didDoc.didUpdateMetadata.error);
     }

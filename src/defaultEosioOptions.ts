@@ -1,4 +1,4 @@
-import { CreateOptions, EosioOptions, UpdateOptions } from './types';
+import { CreateOptions, EosioOptions } from './types';
 
 export const defaultEosioOptions: Partial<EosioOptions> = {
   accountPermission: 'active',
