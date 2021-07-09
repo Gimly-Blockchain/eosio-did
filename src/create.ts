@@ -1,7 +1,6 @@
 import { Resolver } from 'did-resolver';
 import { getResolver, eosioChainRegistry } from 'eosio-did-resolver';
 import { Authority, CreateOptions, DIDCreateResult } from './types';
-import fetch, { FetchError } from 'node-fetch';
 import { JsonRpc, Api, RpcError } from 'eosjs';
 import { TextEncoder, TextDecoder } from 'util';
 import { getChainData, validateAccountName } from './util';
@@ -16,6 +15,7 @@ export default async function create(
 ): Promise<DIDCreateResult> {
   validateAccountName(options.account);
   validateAccountName(name);
+
   const chainRegistry = {
     ...eosioChainRegistry,
     ...options.registry,
@@ -29,7 +29,7 @@ export default async function create(
   ];
 
   for (const service of chainData.service) {
-    const rpc = new JsonRpc(service.serviceEndpoint, { fetch });
+    const rpc = new JsonRpc(service.serviceEndpoint, options.fetch ? { fetch: options.fetch } : undefined);
     const api = new Api({
       rpc: rpc,
       signatureProvider: options.signatureProvider,
@@ -80,7 +80,7 @@ export default async function create(
 
       // fetch DIDDocument
       const did = `did:eosio:${options.chain}:${name}`;
-      const didResult = await resolver.resolve(did, { fetch });
+      const didResult = await resolver.resolve(did, { ...options });
       const { error } = didResult.didResolutionMetadata;
       if (error) {
         return {
@@ -112,7 +112,7 @@ export default async function create(
           }
         }
       }
-      if (!(e instanceof FetchError)) throw e;
+      console.error(e);
     }
   }
 

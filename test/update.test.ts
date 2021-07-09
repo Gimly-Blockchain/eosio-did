@@ -2,6 +2,7 @@ import EosioDID from '../src';
 import { Authority } from '../src/types';
 import { JsSignatureProvider } from 'eosjs/dist/eosjs-jssig';
 import jungleTestKeys from '../jungleTestKeys.json';
+import fetch from 'node-fetch';
 
 describe('EOSIO DID Update', () => {
   it('Update a DID', async () => {
@@ -30,6 +31,7 @@ describe('EOSIO DID Update', () => {
       account: jungleTestKeys.name,
       signatureProvider,
       chain: 'eos:testnet:jungle',
+      fetch
     });
 
     const didDoc = await eosioDID.update('myperm', myKey);
@@ -52,6 +54,7 @@ describe('EOSIO DID Update', () => {
       account: jungleTestKeys.name,
       signatureProvider,
       chain: 'eos:testnet:jungle',
+      fetch
     });
 
     let didDoc = await eosioDID.update('myperm', undefined);

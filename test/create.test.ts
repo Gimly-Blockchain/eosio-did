@@ -1,10 +1,11 @@
 import EosioDID from '../src/index';
 import { Authority } from '../src/types';
 import { JsSignatureProvider } from 'eosjs/dist/eosjs-jssig';
+import fetch from 'node-fetch';
 
 const jungleTestKeys = require('../jungleTestKeys.json');
 
-const NEW_ACCOUNT_NAME = 'eosdidt22112';
+const NEW_ACCOUNT_NAME = 'eosdidt22113';
 
 describe('EOSIO DID class', () => {
   it('Create a Jungle DID', async () => {
@@ -14,6 +15,7 @@ describe('EOSIO DID class', () => {
       chain: 'eos:testnet:jungle',
       account: jungleTestKeys.name,
       signatureProvider,
+      fetch
     });
     const myKey: Authority = {
       threshold: 1,

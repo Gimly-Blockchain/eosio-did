@@ -1,4 +1,5 @@
 import EosioDID from '../src/index';
+import fetch from 'node-fetch';
 
 const jungleTestKeys = require('../jungleTestKeys.json');
 
@@ -6,7 +7,8 @@ describe('EOSIO DID Resolve', () => {
   it('Resolve a Jungle DID', async () => {
     expect.assertions(1);
     const eosioDid = new EosioDID({
-      chain: 'eos:testnet:jungle'
+      chain: 'eos:testnet:jungle',
+      fetch
     });
 
     const did = `did:eosio:eos:testnet:jungle:${jungleTestKeys.name}`;

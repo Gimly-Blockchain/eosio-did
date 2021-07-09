@@ -1,6 +1,7 @@
 import EosioDID from '../src';
 import { JsSignatureProvider } from 'eosjs/dist/eosjs-jssig';
 import jungleTestKeys from '../jungleTestKeys.json';
+import fetch from 'node-fetch';
 
 describe('EOSIO DID Deactivate', () => {
   it('Try deactivate a DID', async () => {
@@ -10,6 +11,7 @@ describe('EOSIO DID Deactivate', () => {
       account: jungleTestKeys.name,
       signatureProvider,
       chain: 'eos:testnet:jungle',
+      fetch,
     });
 
     const did = `did:eosio:eos:testnet:jungle:${jungleTestKeys.name}`;

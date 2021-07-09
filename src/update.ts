@@ -1,7 +1,6 @@
 import { getResolver, eosioChainRegistry } from 'eosio-did-resolver';
 import { Api, JsonRpc, RpcError } from 'eosjs';
 import { Authority, DIDUpdateResult, UpdateOptions } from './types';
-import fetch, { FetchError } from 'node-fetch';
 import { getChainData, validateAccountName } from './util';
 import { TextDecoder, TextEncoder } from 'util';
 import { Resolver } from 'did-resolver';
@@ -14,6 +13,7 @@ export default async function update(
   options: Required<UpdateOptions>
 ): Promise<DIDUpdateResult> {
   validateAccountName(options.account);
+
   const chainRegistry = {
     ...eosioChainRegistry,
     ...options.registry,
@@ -21,7 +21,7 @@ export default async function update(
   const chainData = getChainData(chainRegistry, options.chain);
 
   for (const service of chainData.service) {
-    const rpc = new JsonRpc(service.serviceEndpoint, { fetch });
+    const rpc = new JsonRpc(service.serviceEndpoint, options.fetch ? { fetch: options.fetch } : undefined);
     const api = new Api({
       rpc,
       signatureProvider: options.signatureProvider,
@@ -62,7 +62,7 @@ export default async function update(
 
       // fetch DIDDocument
       const did = `did:eosio:${options.chain}:${options.account}`;
-      const didResult = await resolver.resolve(did, { fetch });
+      const didResult = await resolver.resolve(did, { ...options });
       const { error } = didResult.didResolutionMetadata;
       if (error) {
         return {
@@ -94,7 +94,7 @@ export default async function update(
           }
         }
       }
-      if (!(err instanceof FetchError)) throw err;
+      console.error(err);
     }
   }
 
