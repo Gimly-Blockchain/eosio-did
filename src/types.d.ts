@@ -80,3 +80,10 @@ export interface DIDUpdateResult {
   },
   didDocument?: DIDDocument
 }
+
+export interface DIDDeactivateResult {
+  didDeactivateMetadata: {
+    tx?: TransactResult,
+    error?: 'invalidDid' | 'notFound' | 'representationNotSupported' | 'unsupportedDidMethod' | string | RpcError,
+  }
+}

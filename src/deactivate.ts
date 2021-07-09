@@ -1,8 +1,8 @@
-import { ConfigOptions } from './types';
+import { DIDDeactivateResult, EosioOptions } from './types';
 
 export default async function deactivate(
   did: string,
-  options?: ConfigOptions
-): Promise<void> {
-  throw Error('EOSIO DID deactivate not supported');
+  options?: EosioOptions
+): Promise<DIDDeactivateResult> {
+  throw Error('EOSIO DID deactivate not supported. If this EOSIO chain support deactivation of accounts, please override this function with the appropriate functionality');
 }
