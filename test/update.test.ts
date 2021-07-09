@@ -1,12 +1,11 @@
 import EosioDID from '../src';
 import { Authority } from '../src/types';
-import { RpcError } from 'eosjs';
 import { JsSignatureProvider } from 'eosjs/dist/eosjs-jssig';
 import jungleTestKeys from '../jungleTestKeys.json';
 
 describe('EOSIO DID Update', () => {
   it('Update a DID', async () => {
-    expect.assertions(2);
+    expect.assertions(3);
     const signatureProvider = new JsSignatureProvider([jungleTestKeys.private]);
     const myKey: Authority = {
       threshold: 1,
@@ -27,41 +26,34 @@ describe('EOSIO DID Update', () => {
       ],
       waits: [],
     };
-    let didDoc;
-    try {
-      const eosioDID = new EosioDID({
-        account: jungleTestKeys.name,
-        signatureProvider,
-        chain: 'eos:testnet:jungle',
-      });
-      didDoc = await eosioDID.update('myperm', myKey);
-    } catch (e) {
-      console.log('\nCaught exception: ' + e);
-      if (e instanceof RpcError) console.log(JSON.stringify(e.json, null, 2));
-    }
-    expect(didDoc).toBeDefined();
-    const perm = (didDoc?.verificationMethod || []).filter(
+    const eosioDID = new EosioDID({
+      account: jungleTestKeys.name,
+      signatureProvider,
+      chain: 'eos:testnet:jungle',
+    });
+    const didDoc = await eosioDID.update('myperm', myKey);
+
+    expect(didDoc.didUpdateMetadata.tx).toBeDefined();
+    expect(didDoc.didDocument).toBeDefined();
+    const perm = (didDoc?.didDocument?.verificationMethod || []).filter(
       ({ id }) => id.split('#')[1] === 'myperm'
     )[0];
     expect(perm).toBeDefined();
   });
+
   it('Delete a Permission', async () => {
-    expect.assertions(2);
+    expect.assertions(3);
     const signatureProvider = new JsSignatureProvider([jungleTestKeys.private]);
-    let didDoc;
-    try {
-      const eosioDID = new EosioDID({
-        account: jungleTestKeys.name,
-        signatureProvider,
-        chain: 'eos:testnet:jungle',
-      });
-      didDoc = await eosioDID.update('myperm', undefined);
-    } catch (e) {
-      console.log('\nCaught exception: ' + e);
-      if (e instanceof RpcError) console.log(JSON.stringify(e.json, null, 2));
-    }
-    expect(didDoc).toBeDefined();
-    const perm = (didDoc?.verificationMethod || []).filter(
+    const eosioDID = new EosioDID({
+      account: jungleTestKeys.name,
+      signatureProvider,
+      chain: 'eos:testnet:jungle',
+    });
+    let didDoc = await eosioDID.update('myperm', undefined);
+
+    expect(didDoc.didUpdateMetadata.tx).toBeDefined();
+    expect(didDoc.didDocument).toBeDefined();
+    const perm = (didDoc?.didDocument?.verificationMethod || []).filter(
       ({ id }) => id.split('#')[1] === 'myperm'
     )[0];
     expect(perm).not.toBeDefined();
