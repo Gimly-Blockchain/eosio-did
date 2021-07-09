@@ -1,6 +1,7 @@
 import create from './create';
 import update from './update';
 import deactivate from './deactivate';
+import resolve from './resolve';
 import {
   Authority,
   CreateOptions,
@@ -11,13 +12,13 @@ import {
   DIDCreateResult,
   DIDDeactivateResult,
 } from './types';
-
 import {
   defaultCreateOptions,
   defaultEosioOptions,
   defaultUpdateOptions,
 } from './defaultEosioOptions';
 import { SignatureProvider } from 'eosjs/dist/eosjs-api-interfaces';
+import { DIDResolutionResult } from 'did-resolver';
 
 export default class EosioDID {
   _options: EosioOptions;
@@ -40,11 +41,21 @@ export default class EosioDID {
     active: Authority,
     options?: CreateOptions
   ): Promise<DIDCreateResult> {
-    return create(name, owner, active, {
+    return await create(name, owner, active, {
       ...defaultCreateOptions,
       ...this._options,
       ...options,
     } as Required<CreateOptions>);
+  }
+
+  async resolve(
+    did: string,
+    options?: EosioOptions
+  ): Promise<DIDResolutionResult> {
+    return await resolve(did, {
+      ...this._options,
+      ...options,
+    } as Required<EosioOptions>);
   }
 
   async update(
@@ -52,7 +63,7 @@ export default class EosioDID {
     auth: Authority | undefined,
     options?: UpdateOptions
   ): Promise<DIDUpdateResult> {
-    return update(permission, auth, {
+    return await update(permission, auth, {
       ...defaultUpdateOptions,
       ...this._options,
       ...options,
@@ -60,7 +71,7 @@ export default class EosioDID {
   }
 
   async deactivate(did: string, options?: EosioOptions): Promise<DIDDeactivateResult> {
-    return deactivate(did, {
+    return await deactivate(did, {
       ...this._options,
       ...options,
     } as Required<EosioOptions>)

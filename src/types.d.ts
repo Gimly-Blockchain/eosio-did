@@ -17,8 +17,9 @@ export interface ChainRegistry {
 
 export interface EosioOptions {
   chain: string;
-  account: string;
-  signatureProvider: SignatureProvider;
+  fetch?: any,
+  account?: string;
+  signatureProvider?: SignatureProvider;
   accountPermission?: string;
   registry?: ChainRegistry;
   transactionOptions?: {
