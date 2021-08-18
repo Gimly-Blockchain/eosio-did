@@ -10,6 +10,7 @@ See [README.tsdx.md](./README.tsdx.md) for instructions on how to run, build, te
 
 Contributors:
 - Jack Tanner <jack@gimly.io>
+- Caspar Roelofs <caspar@gimly.io>
 - Jonas Walter
 - Julius Rahaus
 
